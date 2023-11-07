@@ -1,0 +1,35 @@
+name: find-replace-in-files
+description: find and replace strings in files
+
+inputs:
+  bpwd:
+    required: true
+    description: base working directory to start from
+    default: "${{ github.workspace }}"
+  files:
+    required: true
+    description: 'pattern to match files to search'
+    default: '*.ps1'
+  json:
+    required: true
+    description: 'JSON file containing var names and github secret'
+    default: "${{ github.workspace }}/vars.json"
+
+runs:
+  using: "composite"
+  steps:
+    -
+      run: |
+        bpwd=${{ inputs.bpwd }}
+        json=${{ inputs.json }}
+        length=$(jq -r '.vars | length' $json)
+        for i in $(find $bpwd -name "${{ inputs.files }}")
+        do
+          for ((j=0;j<$length;j++))
+          do
+            name=$(jq -r ".vars[$j].name" $json)
+            secret=$(jq -r ".vars[$j].secret" $json)
+            sed -i "s/$name/$secret/g" $i
+          done
+        done
+      shell: bash
