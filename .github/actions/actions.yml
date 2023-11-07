@@ -29,8 +29,8 @@ runs:
         do
           for ((j=0;j<$length;j++))
           do
-            name=$(jq -r ".vars[$j].name" $json)
-            secret=$(jq -r ".vars[$j].secret" $json)
+            name=$(jq -r ".[$j].name" $json)
+            secret=$(jq -r ".[$j].secret" $json)
             sed -i "s/$name/$secret/g" $i
           done
         done
