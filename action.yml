@@ -20,15 +20,10 @@ runs:
     -
       run: |
         bpwd=${{ inputs.bpwd }}
-        echo "bpwd: $bpwd"
         json='${{ inputs.vars }}'
-        echo "json: $json"
-        echo "files: ${{ inputs.files }}"
         length=$(echo $json | jq 'length')
-        echo "starting file for loop"
         for i in $(find $bpwd -name "${{ inputs.files }}")
         do
-          echo "starting count for loop"
           for ((j=0;j<$length;j++))
           do
             name=$(echo $json | jq -r ".[$j].name")
