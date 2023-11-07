@@ -25,12 +25,14 @@ runs:
         echo "json: $json"
         echo "files: ${{ inputs.files }}"
         length=$(echo $json | jq 'length')
+        echo "starting file for loop"
         for i in $(find $bpwd -name "${{ inputs.files }}")
         do
+          echo "starting count for loop"
           for ((j=0;j<$length;j++))
           do
-            name=$(jq -r ".[$j].name" $json)
-            secret=$(jq -r ".[$j].secret" $json)
+            name=$(echo $json | jq -r ".[$j].name")
+            secret=$(echo $json | jq -r ".[$j].secret")
             sed -i "s/$name/$secret/g" $i
           done
         done
