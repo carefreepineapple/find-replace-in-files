@@ -10,10 +10,9 @@ inputs:
     required: true
     description: 'pattern to match files to search'
     default: '*.ps1'
-  json:
+  vars:
     required: true
-    description: 'JSON file containing var names and github secret'
-    default: "${{ github.workspace }}/vars.json"
+    description: 'JSON array containing var names and secrets'
 
 runs:
   using: "composite"
@@ -21,8 +20,11 @@ runs:
     -
       run: |
         bpwd=${{ inputs.bpwd }}
-        json=${{ inputs.json }}
-        length=$(jq -r '.vars | length' $json)
+        echo "bpwd: $bpwd"
+        json='${{ inputs.vars }}'
+        echo "json: $json"
+        echo "files: ${{ inputs.files }}"
+        length=$(echo $json | jq 'length')
         for i in $(find $bpwd -name "${{ inputs.files }}")
         do
           for ((j=0;j<$length;j++))
